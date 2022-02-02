@@ -1,0 +1,11 @@
+import OverviewContent from '../../components/organisms/OverviewContent';
+import Sidebar from '../../components/organisms/Sidebar';
+
+export default function index() {
+  return (
+    <section className="overview overflow-auto">
+      <Sidebar active="overview" />
+      <OverviewContent />
+    </section>
+  );
+}
