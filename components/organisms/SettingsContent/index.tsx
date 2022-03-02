@@ -13,9 +13,7 @@ export default function SettingsContent() {
                 <div className="avatar img-fluid">
                   <Image src="/img/avatar-1.png" width="90" height="90" />
                 </div>
-                <div
-                  className="avatar-overlay position-absolute top-0 d-flex justify-content-center align-items-center"
-                >
+                <div className="avatar-overlay position-absolute top-0 d-flex justify-content-center align-items-center">
                   <svg
                     width="24"
                     height="24"
@@ -56,11 +54,7 @@ export default function SettingsContent() {
               </div>
               <div className="image-upload">
                 <label htmlFor="avatar">
-                  <Image
-                    src="/icon/label-img-upload.svg"
-                    width="90"
-                    height="90"
-                  />
+                  <Image src="/icon/label-img-upload.svg" width="90" height="90" />
                 </label>
                 <input id="avatar" type="file" name="avatar" accept="image/png, image/jpeg" />
               </div>
@@ -98,9 +92,7 @@ export default function SettingsContent() {
               </button>
             </div>
           </form>
-
         </div>
-
       </div>
     </main>
   );
