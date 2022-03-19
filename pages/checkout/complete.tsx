@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import React from 'react';
 
 export default function complete() {
@@ -237,22 +238,24 @@ export default function complete() {
           </p>
         </div>
         <div className="button-group d-flex flex-column mx-auto">
-          <a
-            className="btn btn-dashboard fw-medium text-lg text-white rounded-pill mb-16"
-            href="../member/overview.html"
-            role="button"
-          >
-            My
-            Dashboard
-          </a>
-          <a
-            className="btn btn-whatsapp fw-medium text-lg color-palette-1 rounded-pill"
-            href="#"
-            role="button"
-          >
-            WhatsApp
-            ke Admin
-          </a>
+          <Link href="/member">
+            <button
+              className="btn btn-dashboard fw-medium text-lg text-white rounded-pill mb-16"
+              type="button"
+            >
+              My
+              Dashboard
+            </button>
+          </Link>
+          <Link href="https://wa.me/6289678163452?text=Saya%20sudah%20melakukan%20pembayaran%20topup">
+            <button
+              className="btn btn-whatsapp fw-medium text-lg color-palette-1 rounded-pill"
+              type="button"
+            >
+              WhatsApp
+              ke Admin
+            </button>
+          </Link>
         </div>
       </div>
     </section>

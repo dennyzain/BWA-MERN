@@ -1,19 +1,29 @@
 import Link from 'next/link';
 import Image from 'next/image';
+import { IMG } from '../../../services/dataPlayer';
 
-interface FeatureGameProps{
-    thumbnail:'Thumbnail-1'|'Thumbnail-2'|'Thumbnail-3'|'Thumbnail-4'|'Thumbnail-5'
-    title:string;
-    category:string;
+interface FeatureGameProps {
+  id: string;
+  thumbnail: string;
+  title: string;
+  category: string;
 }
 
-export default function FeatureGameItem({ thumbnail, title, category }:FeatureGameProps) {
+export default function FeatureGameItem({
+  id, thumbnail, title, category,
+}: FeatureGameProps) {
   return (
     <div className="featured-game-card position-relative">
-      <Link href="/detail">
+      <Link href={`/detail/${id}`}>
         <a>
           <div className="blur-sharp">
-            <Image className="thumbnail" src={`/img/${thumbnail}.png`} width={205} height={270} alt={thumbnail} />
+            <Image
+              className="thumbnail"
+              src={`${IMG}/${thumbnail}`}
+              width={205}
+              height={270}
+              alt={thumbnail}
+            />
           </div>
           <div className="cover position-absolute bottom-0 m-32">
             <div className="d-flex flex-column h-100 justify-content-between text-decoration-none">
@@ -28,7 +38,6 @@ export default function FeatureGameItem({ thumbnail, title, category }:FeatureGa
           </div>
         </a>
       </Link>
-
     </div>
   );
 }

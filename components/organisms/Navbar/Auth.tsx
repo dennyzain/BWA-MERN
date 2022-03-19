@@ -1,10 +1,30 @@
+import Cookies from 'js-cookie';
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
+import jwtDecode from 'jwt-decode';
+import { playerCookie } from '../../../interfaces/SignInSections';
 
-interface AuthProps{
-    isLogin:boolean;
-}
+export default function Auth() {
+  const [isLogin, setIsLogin] = useState(false);
+  const [user, setUser] = useState({
+    avatar: '',
+  });
+  useEffect(() => {
+    const IMG = process.env.NEXT_PUBLIC_IMG;
+    const token = Cookies.get('tkn');
+    if (token) {
+      const tknBase = atob(token);
+      const JWTDecode:playerCookie = jwtDecode(tknBase);
+      setUser({ avatar: `${IMG}/${JWTDecode.player.avatar}` });
+      setIsLogin(true);
+    }
+  }, []);
 
-export default function Auth({ isLogin }:Partial<AuthProps>) {
+  const handleLogOut = () => {
+    Cookies.remove('tkn');
+    setIsLogin(false);
+  };
+
   return (
     !isLogin ? (
       <li className="nav-item my-auto">
@@ -30,7 +50,7 @@ export default function Auth({ isLogin }:Partial<AuthProps>) {
             aria-expanded="false"
           >
             <img
-              src="/img/avatar-1.png"
+              src={user.avatar}
               className="rounded-circle"
               width="40"
               height="40"
@@ -55,9 +75,7 @@ export default function Auth({ isLogin }:Partial<AuthProps>) {
               </Link>
             </li>
             <li>
-              <Link href="/sign-in">
-                <a className="dropdown-item text-lg color-palette-2" href="#">Log Out</a>
-              </Link>
+              <button onClick={handleLogOut} type="button" className="dropdown-item text-lg color-palette-2">Log Out</button>
             </li>
           </ul>
         </div>

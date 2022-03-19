@@ -1,4 +1,54 @@
+import { useEffect, useState } from 'react';
+import NumberFormat from 'react-number-format';
+
 export default function CheckoutDetail() {
+  const [data, setData] = useState({
+    orderID: '#DZNX01',
+    verifyID: '',
+    bankAccountName: '',
+    dataNominal: {
+      _id: '',
+      coinName: '',
+      coinQuantity: 0,
+      price: 0,
+
+    },
+    dataPayment: {
+      pay: {
+        banks: [{
+          accountNumber: 0,
+          bankName: '',
+          name: '',
+          _id: '',
+        }],
+        _id: '',
+        type: '',
+      },
+    },
+
+  });
+  useEffect(() => {
+    const local = localStorage.getItem('data-item')!;
+    const account = localStorage.getItem('account-item')!;
+    const localData = JSON.parse(local);
+    const accountData = JSON.parse(account);
+    setData(accountData);
+    setData((prevState:{verifyID:string, bankAccountName:string, orderID:string}) => ({
+      ...prevState,
+      orderID: '#DZNX01',
+      dataTopUp: localData.dataItem,
+      dataPayment: localData.dataPayment,
+      dataNominal: localData.dataNominal,
+
+    }));
+  }, []);
+  const {
+    dataNominal, dataPayment, verifyID, bankAccountName, orderID,
+  } = data;
+  const { price } = dataNominal;
+  const tax = price * (10 / 100);
+  const totalPrice = price + tax;
+
   return (
     <>
       <div className="purchase pt-md-50 pt-30">
@@ -8,30 +58,58 @@ export default function CheckoutDetail() {
           <span
             className="purchase-details"
           >
-            masayoshizero
+            {verifyID}
           </span>
         </p>
         <p className="text-lg color-palette-1 mb-20">
           Order ID
-          <span className="purchase-details">#GG001</span>
+          <span className="purchase-details">{orderID}</span>
         </p>
         <p className="text-lg color-palette-1 mb-20">
           Item
-          <span className="purchase-details">250 Diamonds</span>
+          <span className="purchase-details">
+            {dataNominal.coinQuantity}
+            {' '}
+            {dataNominal.coinName}
+          </span>
         </p>
         <p className="text-lg color-palette-1 mb-20">
           Price
-          <span className="purchase-details">Rp 42.280.500</span>
+          <span className="purchase-details">
+            <NumberFormat
+              prefix="Rp. "
+              value={dataNominal.price}
+              displayType="text"
+              thousandSeparator="."
+              decimalSeparator=","
+            />
+
+          </span>
         </p>
         <p className="text-lg color-palette-1 mb-20">
           Tax (10%)
-          <span className="purchase-details">Rp 4.228.000</span>
+          <span className="purchase-details">
+            <NumberFormat
+              prefix="Rp. "
+              value={tax}
+              displayType="text"
+              thousandSeparator="."
+              decimalSeparator=","
+            />
+
+          </span>
         </p>
         <p className="text-lg color-palette-1 mb-20">
           Total
           <span className="purchase-details color-palette-4">
-            Rp
-            55.000.600
+            <NumberFormat
+              prefix="Rp. "
+              value={totalPrice}
+              displayType="text"
+              thousandSeparator="."
+              decimalSeparator=","
+            />
+
           </span>
         </p>
       </div>
@@ -40,30 +118,28 @@ export default function CheckoutDetail() {
         <p className="text-lg color-palette-1 mb-20">
           Your Account Name
           <span className="purchase-details">
-            Masayoshi
-            Angga Zero
+            {bankAccountName}
           </span>
         </p>
         <p className="text-lg color-palette-1 mb-20">
           Type
-          <span className="payment-details">Worldwide Transfer</span>
+          <span className="payment-details">{dataPayment.pay.type}</span>
         </p>
         <p className="text-lg color-palette-1 mb-20">
           Bank Name
-          <span className="payment-details">Mandiri</span>
+          <span className="payment-details">{dataPayment.pay.banks.map((item) => (item.bankName))}</span>
         </p>
         <p className="text-lg color-palette-1 mb-20">
           Bank Account Name
           <span className="payment-details">
-            PT Store GG
-            Indonesia
+            {dataPayment.pay.banks.map((item) => (item.name))}
           </span>
         </p>
         <p className="text-lg color-palette-1 mb-20">
           Bank Number
           <span className="payment-details">
-            1800 - 9090 -
-            2021
+            {dataPayment.pay.banks.map((item) => (item.accountNumber))}
+
           </span>
         </p>
       </div>

@@ -1,4 +1,21 @@
+import { useRouter } from 'next/router';
+import { ChangeEventHandler, useState } from 'react';
+
 export default function SignUpForm() {
+  const router = useRouter();
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const handleName:ChangeEventHandler<HTMLInputElement> = (e) => setName(e.target.value);
+  const handleEmail:ChangeEventHandler<HTMLInputElement> = (e) => setEmail(e.target.value);
+  const handlePassword:ChangeEventHandler<HTMLInputElement> = (e) => setPassword(e.target.value);
+  const handleSubmit = () => {
+    const userForm = {
+      name, email, password,
+    };
+    localStorage.setItem('user-form', JSON.stringify(userForm));
+    router.push('/sign-up-photo');
+  };
   return (
     <>
       <div className="pt-50">
@@ -10,6 +27,7 @@ export default function SignUpForm() {
           name="name"
           aria-describedby="name"
           placeholder="Enter your name"
+          onChange={handleName}
         />
       </div>
       <div className="pt-30">
@@ -24,6 +42,8 @@ export default function SignUpForm() {
           name="email"
           aria-describedby="email"
           placeholder="Enter your email address"
+          onChange={handleEmail}
+
         />
       </div>
       <div className="pt-30">
@@ -35,16 +55,18 @@ export default function SignUpForm() {
           name="password"
           aria-describedby="password"
           placeholder="Your password"
+          onChange={handlePassword}
+
         />
       </div>
       <div className="button-group d-flex flex-column mx-auto pt-50">
-        <a
+        <button
+          type="button"
           className="btn btn-sign-up fw-medium text-lg text-white rounded-pill mb-16"
-          href="/sign-up-photo"
-          role="button"
+          onClick={handleSubmit}
         >
           Continue
-        </a>
+        </button>
         <a
           className="btn btn-sign-in fw-medium text-lg color-palette-1 rounded-pill"
           href="/sign-in"

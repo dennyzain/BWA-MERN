@@ -1,7 +1,49 @@
+import Cookies from 'js-cookie';
+import jwtDecode from 'jwt-decode';
 import Image from 'next/image';
+import { useRouter } from 'next/router';
+import { ChangeEvent, useEffect, useState } from 'react';
+import { toast } from 'react-toastify';
+import { playerCookie } from '../../../interfaces/SignInSections';
+import { setProfile } from '../../../services/dataMember';
+import { IMG } from '../../../services/dataPlayer';
 import Input from '../../atoms/Input';
 
+interface settingContent{
+  id:string;
+  avatar:File|string|undefined |Blob;
+  username:string;
+  email:string;
+}
 export default function SettingsContent() {
+  const router = useRouter();
+  const [user, setUser] = useState<settingContent>({
+    id: '', username: '', email: '', avatar: '',
+  });
+  const [imagePreview, setImagePreview] = useState('');
+  useEffect(() => {
+    const cookies = Cookies.get('tkn');
+    const atobTkn = atob(cookies!);
+    const data :playerCookie = jwtDecode(atobTkn);
+    setUser(data.player);
+  }, []);
+
+  const handleName = (e:ChangeEvent<HTMLInputElement>) => setUser((prev) => ({ ...prev, username: e.target.value }));
+  const handleEmail = (e:ChangeEvent<HTMLInputElement>) => setUser((prev) => ({ ...prev, email: e.target.value }));
+  const handleSubmit = async () => {
+    const form = new FormData();
+    form.append('_id', user.id);
+    form.append('name', user.username);
+    form.append('avatar', user.avatar!);
+    form.append('email', user.email);
+    const res = await setProfile(form);
+    if (res.error) {
+      toast.error(res.message, { theme: 'colored' });
+    } else {
+      toast.success(res.message, { theme: 'colored' });
+      router.push('/member');
+    }
+  };
   return (
     <main className="main-wrapper">
       <div className="ps-lg-0">
@@ -11,7 +53,9 @@ export default function SettingsContent() {
             <div className="photo d-flex">
               <div className="position-relative me-20">
                 <div className="avatar img-fluid">
-                  <Image src="/img/avatar-1.png" width="90" height="90" />
+                  {
+                  !imagePreview ? <Image src={`${IMG}/${user.avatar}`} width="90" height="90" /> : <Image src={imagePreview} width="90" height="90" />
+                }
                 </div>
                 <div className="avatar-overlay position-absolute top-0 d-flex justify-content-center align-items-center">
                   <svg
@@ -54,9 +98,20 @@ export default function SettingsContent() {
               </div>
               <div className="image-upload">
                 <label htmlFor="avatar">
-                  <Image src="/icon/label-img-upload.svg" width="90" height="90" />
+                  <Image src="/icon/upload.svg" width="90" height="90" alt="upload.svg" />
+                  <input
+                    type="file"
+                    name="avatar"
+                    id="avatar"
+                    accept="image/png,image/jpeg"
+                    onChange={(e) => {
+                      if (e.target.files !== null) {
+                        setImagePreview(URL.createObjectURL(e.target.files[0]));
+                        setUser({ ...user, avatar: e.target.files[0] });
+                      } return null;
+                    }}
+                  />
                 </label>
-                <input id="avatar" type="file" name="avatar" accept="image/png, image/jpeg" />
               </div>
             </div>
             <Input
@@ -66,26 +121,24 @@ export default function SettingsContent() {
               name="name"
               aria-describedby="name"
               placeholder="Enter your name"
+              value={user.username}
+              onChange={handleName}
             />
             <Input
               label="Email Address"
               type="text"
               id="email"
-              email="email"
               aria-describedby="email"
               placeholder="Enter your email"
-            />
-            <Input
-              label="Phone"
-              type="tel"
-              id="phone"
-              phone="phone"
-              aria-describedby="phone"
-              placeholder="Enter your phone"
+              value={user.email}
+              onChange={handleEmail}
+              disabled
+
             />
             <div className="button-group d-flex flex-column pt-50">
               <button
-                type="submit"
+                onClick={handleSubmit}
+                type="button"
                 className="btn btn-save fw-medium text-lg text-white rounded-pill"
               >
                 Save My Profile

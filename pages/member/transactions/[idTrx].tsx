@@ -1,22 +1,23 @@
 import jwtDecode from 'jwt-decode';
 import { GetServerSideProps } from 'next';
 import Sidebar from '../../../components/organisms/Sidebar';
-import TransactionsContent from '../../../components/organisms/TransactionsContent';
+import TransactionsDetailContent from '../../../components/organisms/TransactionsDetailContent';
 import { ProfileProps } from '../../../interfaces/SidebarSections';
 import { playerCookie } from '../../../interfaces/SignInSections';
+import { getTransactionDetail } from '../../../services/dataMember';
 import { IMG } from '../../../services/dataPlayer';
 
-export default function Transactions({ profile }:ProfileProps) {
+export default function TransactionsDetail({ profile, data }:ProfileProps) {
   return (
-    <section className="transactions overflow-auto">
+    <section className="transactions-detail overflow-auto">
       <Sidebar active="transactions" dataProfile={profile} />
-      <TransactionsContent />
+      <TransactionsDetailContent data={data!} />
     </section>
   );
 }
-
-export const getServerSideProps: GetServerSideProps = async ({ req }) => {
+export const getServerSideProps: GetServerSideProps = async ({ req, params }) => {
   const { tkn } = req.cookies;
+  const { idTrx } = params!;
   if (!tkn) {
     return {
       redirect: {
@@ -27,11 +28,13 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
   }
   const tknBase = Buffer.from(tkn, 'base64').toString('ascii');
   const JWTDecode: playerCookie = jwtDecode(tknBase);
+  const res = await getTransactionDetail(idTrx!, tknBase);
   const { player } = JWTDecode;
   player.avatar = `${IMG}/${JWTDecode.player.avatar}`;
   return {
     props: {
       profile: player,
+      data: res.data,
     },
   };
 };

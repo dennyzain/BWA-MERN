@@ -1,7 +1,11 @@
+import jwtDecode from 'jwt-decode';
 import Image from 'next/image';
+import { GetServerSideProps } from 'next';
+import { IMG } from '../../services/dataPlayer';
 import CheckoutConfirmation from '../../components/organisms/CheckoutConfirmation';
 import CheckoutDetail from '../../components/organisms/CheckoutDetail';
 import CheckoutItem from '../../components/organisms/CheckoutItem';
+import { playerCookie } from '../../interfaces/SignInSections';
 
 export default function Checkout() {
   return (
@@ -24,3 +28,24 @@ export default function Checkout() {
     </section>
   );
 }
+
+export const getServerSideProps:GetServerSideProps = async ({ req }) => {
+  const { tkn } = req.cookies;
+  if (!tkn) {
+    return {
+      redirect: {
+        destination: '/sign-in',
+        permanent: false,
+      },
+    };
+  }
+  const tknBase = Buffer.from(tkn, 'base64').toString('ascii');
+  const JWTDecode:playerCookie = jwtDecode(tknBase);
+  const { player } = JWTDecode;
+  player.avatar = `${IMG}/${JWTDecode.player.avatar}`;
+  return {
+    props: {
+      user: player,
+    },
+  };
+};

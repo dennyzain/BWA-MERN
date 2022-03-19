@@ -1,4 +1,21 @@
-export default function SignInForm() {
+import {
+  ChangeEventHandler, useEffect, useState,
+} from 'react';
+import { functionProps } from '../../../interfaces/SignInSections';
+
+export default function SignInForm({ callbackFromParent }:functionProps) {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const handleEmail:ChangeEventHandler<HTMLInputElement> = (e) => setEmail(e.target.value);
+  const handlePassword:ChangeEventHandler<HTMLInputElement> = (e) => setPassword(e.target.value);
+  const data = {
+    email, password,
+  };
+
+  useEffect(() => {
+    callbackFromParent(data);
+  }, [email, password]);
+
   return (
     <>
       <div className="pt-50">
@@ -13,6 +30,7 @@ export default function SignInForm() {
           name="email"
           aria-describedby="email"
           placeholder="Enter your email address"
+          onChange={handleEmail}
         />
       </div>
       <div className="pt-30">
@@ -29,6 +47,8 @@ export default function SignInForm() {
           name="password"
           aria-describedby="password"
           placeholder="Your password"
+          onChange={handlePassword}
+
         />
       </div>
     </>
